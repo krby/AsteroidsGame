@@ -25,7 +25,7 @@ public void setup()
 
 public void draw() 
 {
-	background(10, 40);
+	background(10);
 	//ship
 	ship1.control(); //controlling keys wasd
 	ship1.move();
@@ -43,6 +43,11 @@ public void draw()
 	{
 		stars[i].show();
 	}
+
+	//show numbers
+	fill(255);
+	text("xDirection: " + (int)ship1.getDirectionX(), 20, 50);
+	text("yDirection: " + (int)ship1.getDirectionY(), 20, 60);
 }
 
 public void keyReleased()
@@ -52,15 +57,17 @@ public void keyReleased()
 		ship1.hyperspace(); //hyerspace stops ship and puts in new location
 	}
 }
-public void mousePressed()
+
+public void mousePressed() //for debugging
 {
 	setup();
 	redraw();
 }	
 
-//classes----
+//___classes___
 class SpaceShip extends Floater  
-{   
+{
+	private int maxSpd;
 	public SpaceShip()
 	{
 		//how the ship looks
@@ -85,6 +92,8 @@ class SpaceShip extends Floater
 		myDirectionX = 0;
 		myDirectionY = 0;
 		myPointDirection = 0;
+		maxSpd = 5;
+
 	}
 
 	public void setX(int x) {myCenterX = x;}
@@ -101,8 +110,8 @@ class SpaceShip extends Floater
 	public void control()
 	{
 		//controlling keys: w/s to forward/backward, d/a left/right
-		if (keyPressed && key == 'w') {accelerate(0.15);} 
-		if (keyPressed && key == 's') {accelerate(-0.15);}
+		if (keyPressed && key == 'w') {accelerate(0.05);}
+		if (keyPressed && key == 's') {accelerate(-0.05);} 
 		if (keyPressed && key == 'd') {rotate(3);}
 		if (keyPressed && key == 'a') {rotate(-3);}
 	}
@@ -126,21 +135,49 @@ class Asteroid extends Floater
 	{
 		rotSpd = (int)(Math.random()*5)-2;
 		//asteroid appearance
-		corners = 3; 
+		corners = 4;
+		int[] xCoords = {-12, -12, 12, 12};
+		int[] yCoords = {12, -12, -15, 15};
+		xCorners = xCoords;
+		yCorners = yCoords;
+
+		//random method
+		scaler = Math.random()*5
+		corners = (int)(Math.random()*2)+4;
 		xCorners = new int[corners];
 		yCorners = new int[corners];
-		//coordinates for the corners of ship 
-		xCorners[0] = -6;
-		yCorners[0] = -6;
-		xCorners[1] = 12;
-		yCorners[1] = 0;
-		xCorners[2] = -6;
-		yCorners[2] = 6;
+		//coordinates for the corners of ship
+		for (int i = 0; i < corners.length; i++)
+		{
+			xCorners[i] = i-2
+			yCorners[i] = 
+		}
+		numbers to relate (x)
+		3: -6, -6, 6
+		3: 6, -6, 0
+
+		4: -6, -6, 6, 6
+		4: 6, -6, -6, 6
+
+		5: -6, -6, 6, 9, 6
+		5: 6, -6, -6, 0, 6
+
+		6: -6, -9, -6, 6, 9, 6
+		6: 6, 0, -6, -6, 0, 6
+		// xCorners[0] = 0;
+		// yCorners[0] = 0;		
+		// xCorners[1] = -6;
+		// yCorners[1] = -6;
+		// xCorners[2] = 12;
+		// yCorners[2] = 0;
+		// xCorners[3] = -6;
+		// yCorners[3] = 6;
+
 
 		//position related
 		myColor = color(150);
-		myCenterX = width/2;
-		myCenterY = height/2;
+		myCenterX = Math.random()*width;
+		myCenterY = Math.random()*height;
 		myDirectionX = (int)(Math.random()*5)-2;
 		myDirectionY = (int)(Math.random()*5)-2;
 		myPointDirection = (int)(Math.random()*5)-2;
@@ -215,8 +252,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 
 	public void rotate(int nDegreesOfRotation)   
 	{
-	//rotates the floater by a given number of degrees    
-	myPointDirection+=nDegreesOfRotation;
+		//rotates the floater by a given number of degrees    
+		myPointDirection+=nDegreesOfRotation;
 	}
 
 	public void move() //move the floater in the current direction of travel
