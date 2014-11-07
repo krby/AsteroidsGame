@@ -46,8 +46,8 @@ public void draw()
 
 	//show numbers
 	fill(255);
-	text("xDirection: " + (int)ship1.getDirectionX(), 20, 50);
-	text("yDirection: " + (int)ship1.getDirectionY(), 20, 60);
+	text("xDirection: " + (float)ship1.getDirectionX(), 20, 50);
+	text("yDirection: " + (float)ship1.getDirectionY(), 20, 60);
 }
 
 public void keyReleased()
@@ -86,7 +86,7 @@ class SpaceShip extends Floater
 
 
 		//position related
-		myColor = color(150);
+		myColor = color(250);
 		myCenterX = width/2;
 		myCenterY = height/2;
 		myDirectionX = 0;
@@ -130,49 +130,60 @@ class SpaceShip extends Floater
 
 class Asteroid extends Floater 
 {
-	private int rotSpd;
+	private int rotSpd, scaler;
 	public Asteroid()
 	{
-		rotSpd = (int)(Math.random()*5)-2;
-		//asteroid appearance
-		corners = 4;
-		int[] xCoords = {-12, -12, 12, 12};
-		int[] yCoords = {12, -12, -15, 15};
-		xCorners = xCoords;
-		yCorners = yCoords;
+		if (Math.random() >= 0.5) //can spin both ways
+		{
+			rotSpd = (int)(Math.random()*5)+1;
+		}
+		else
+		{
+			rotSpd = -((int)(Math.random()*5)+1);
+		}
+		
+		// //asteroid appearance //the working stuff
+		// corners = 4;
+		// int[] xCoords = {-12, -12, 12, 12};
+		// int[] yCoords = {12, -12, -15, 15};
+		// xCorners = xCoords;
+		// yCorners = yCoords;
 
-		//random method
-		scaler = Math.random()*5
+		//random method of drawing random sided asteroids
+		scaler = (int)(Math.random()*4)+1;
 		corners = (int)(Math.random()*2)+4;
 		xCorners = new int[corners];
 		yCorners = new int[corners];
 		//coordinates for the corners of ship
-		for (int i = 0; i < corners.length; i++)
+		for (int i = 0; i < xCorners.length; i++)
 		{
-			xCorners[i] = i-2
-			yCorners[i] = 
+			if ((float)((i+1)/corners) >= corners/2) //positive
+			{
+				xCorners[i] = 2*scaler;
+			}
+			else 
+			{
+				xCorners[i] = -2*scaler;
+			}
+
+			if ((float)((i+1)/corners) >= corners/2) //positive
+			{
+				
+			}
+			yCorners[i] = 5;
 		}
-		numbers to relate (x)
-		3: -6, -6, 6
-		3: 6, -6, 0
+		// numbers to relate
+		// 3: -6, -6, 6
+		// 3: 6, -6, 0
 
-		4: -6, -6, 6, 6
-		4: 6, -6, -6, 6
+		// 4: -6, -6, 6, 6
+		// 4: 6, -6, -6, 6
 
-		5: -6, -6, 6, 9, 6
-		5: 6, -6, -6, 0, 6
+		// 5: -6, -6, 6, 9, 6
+		// 5: 6, -6, -6, 0, 6
 
-		6: -6, -9, -6, 6, 9, 6
-		6: 6, 0, -6, -6, 0, 6
-		// xCorners[0] = 0;
-		// yCorners[0] = 0;		
-		// xCorners[1] = -6;
-		// yCorners[1] = -6;
-		// xCorners[2] = 12;
-		// yCorners[2] = 0;
-		// xCorners[3] = -6;
-		// yCorners[3] = 6;
-
+		// 6: -6, -9, -6, 6, 9, 6
+		// 6: 6, 0, -6, -6, 0, 6
 
 		//position related
 		myColor = color(150);
@@ -312,7 +323,7 @@ public class Star
 	public void show()
 	{
 		noStroke();
-		fill(250);
+		fill(255, 200);
 		ellipse(posX, posY, mySize, mySize);
 	}
 }
