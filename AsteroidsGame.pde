@@ -143,36 +143,29 @@ class Asteroid extends Floater
 		}
 		
 		//asteroid appearance //the working stuff
-		corners = 4;
-		int[] xCoords = {12, -12, -12, 12};
-		int[] yCoords = {12, 12, -15, -15};
-		xCorners = xCoords;
-		yCorners = yCoords;
+		// corners = 4;
+		// int[] xCoords = {12, -12, -12, 12};
+		// int[] yCoords = {12, 12, -15, -15};
+		// xCorners = xCoords;
+		// yCorners = yCoords;
 
 		//random method of drawing random sided asteroids
 		scaler = (int)(Math.random()*4)+1;
-		corners = (int)(Math.random()*2)+4;
+		corners = (int)(Math.random()*3)+100;
 		xCorners = new int[corners];
 		yCorners = new int[corners];
 		//coordinates for the corners of ship
-		for (int i = 0; i < xCorners.length; i++)
+		for (int i = 0; i < corners; i++)
 		{
-			xCorners[i] = (int)(scaler*12*Math.cos(i*(360/(corners))));
-			yCorners[i] = (int)(scaler*12*Math.sin(i*(360/(corners))));
+			xCorners[i] = (int)(scaler*12*Math.cos(i*(2*Math.PI/(1*corners)))); //randomly chooses, starting from zero degrees
+			yCorners[i] = (int)(scaler*12*Math.sin(i*(2*Math.PI/(1*corners)))); //goes around the backwards unit circle
+			scaler = (int)(Math.random()*4)+1;
 		}
+		println ("end");
 
-		// numbers to relate
-		// 4: 12, -12, -12, 12
-		// 4: 12, 12, -12, -12
-
-		// 5: 12, -12, -12, 0, 12
-		// 5: 12, 12, -12, -15, -12
-
-		// 6: 12, 0, -12, -12, 0, 12
-		// 6: 12, 15, 12, -12, -15, -12
 
 		//position related
-		myColor = color(150);
+		myColor = color(250);
 		myCenterX = Math.random()*width;
 		myCenterY = Math.random()*height;
 		myDirectionX = (int)(Math.random()*5)-2;
