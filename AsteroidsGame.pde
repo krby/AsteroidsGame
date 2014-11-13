@@ -9,7 +9,7 @@ public void setup()
 	ship1 = new SpaceShip();
 
 	//asteroids
-	asteroids = new Asteroid[1];
+	asteroids = new Asteroid[100];
 	for (int i = 0; i < asteroids.length; i++)
 	{
 		asteroids[i] = new Asteroid();
@@ -130,7 +130,7 @@ class SpaceShip extends Floater
 
 class Asteroid extends Floater 
 {
-	private int rotSpd, scaler;
+	private int rotSpd, genSize; //rotation spd, general size
 	public Asteroid()
 	{
 		if (Math.random() >= 0.5) //can spin both ways
@@ -141,31 +141,22 @@ class Asteroid extends Floater
 		{
 			rotSpd = -((int)(Math.random()*5)+1);
 		}
-		
-		//asteroid appearance //the working stuff
-		// corners = 4;
-		// int[] xCoords = {12, -12, -12, 12};
-		// int[] yCoords = {12, 12, -15, -15};
-		// xCorners = xCoords;
-		// yCorners = yCoords;
 
 		//random method of drawing random sided asteroids
-		scaler = (int)(Math.random()*4)+1;
-		corners = (int)(Math.random()*3)+100;
+		genSize = (int)(Math.random()*4)+6; 
+		corners = (int)(Math.random()*3)+10; 
 		xCorners = new int[corners];
 		yCorners = new int[corners];
 		//coordinates for the corners of ship
 		for (int i = 0; i < corners; i++)
 		{
-			xCorners[i] = (int)(scaler*12*Math.cos(i*(2*Math.PI/(1*corners)))); //randomly chooses, starting from zero degrees
-			yCorners[i] = (int)(scaler*12*Math.sin(i*(2*Math.PI/(1*corners)))); //goes around the backwards unit circle
-			scaler = (int)(Math.random()*4)+1;
+			int scaler = (int)(Math.random()*4)+1; //puts points in random places
+			xCorners[i] = (int)(scaler*genSize*Math.cos(i*(2*Math.PI/(1*corners)))); //randomly chooses, starting from zero degrees
+			yCorners[i] = (int)(scaler*genSize*Math.sin(i*(2*Math.PI/(1*corners)))); //goes around the backwards unit circle
 		}
-		println ("end");
-
 
 		//position related
-		myColor = color(250);
+		myColor = color(230);
 		myCenterX = Math.random()*width;
 		myCenterY = Math.random()*height;
 		myDirectionX = (int)(Math.random()*5)-2;
