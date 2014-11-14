@@ -1,7 +1,7 @@
 SpaceShip ship1;
 
 Star[] stars;
-Asteroid[] asteroids;
+ArrayList<Asteroid> asteroids;
 
 public void setup() 
 {
@@ -9,11 +9,12 @@ public void setup()
 	ship1 = new SpaceShip();
 
 	//asteroids
-	asteroids = new Asteroid[100];
-	for (int i = 0; i < asteroids.length; i++)
+	asteroids = new ArrayList<Asteroid>();
+	for (int i = 0; i < 12; i++)
 	{
-		asteroids[i] = new Asteroid();
+		asteroids.add(new Asteroid());	
 	}
+	
 
 	//stars
 	stars = new Star[100];
@@ -32,10 +33,14 @@ public void draw()
 	ship1.show();
 
 	//asteroids
-	for (int i = 0; i < asteroids.length; i++)
+	for (int i = 0; i < asteroids.size(); i++)
 	{
-		asteroids[i].move();
-		asteroids[i].show();
+		asteroids.get(i).move();
+		asteroids.get(i).show();
+		if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 2*asteroids.get(i).getSize())
+		{
+			asteroids.remove(i);
+		}
 	}
 
 	//stars
@@ -143,16 +148,16 @@ class Asteroid extends Floater
 		}
 
 		//random method of drawing random sided asteroids
-		genSize = (int)(Math.random()*4)+6; 
-		corners = (int)(Math.random()*3)+10; 
+		genSize = (int)(Math.random()*4)+3; 
+		corners = (int)(Math.random()*4)+4; 
 		xCorners = new int[corners];
 		yCorners = new int[corners];
 		//coordinates for the corners of ship
 		for (int i = 0; i < corners; i++)
 		{
-			int scaler = (int)(Math.random()*4)+1; //puts points in random places
-			xCorners[i] = (int)(scaler*genSize*Math.cos(i*(2*Math.PI/(1*corners)))); //randomly chooses, starting from zero degrees
-			yCorners[i] = (int)(scaler*genSize*Math.sin(i*(2*Math.PI/(1*corners)))); //goes around the backwards unit circle
+			int randomizer = (int)(Math.random()*4)+1; //puts points in random places
+			xCorners[i] = (int)(randomizer*genSize*Math.cos(i*(2*Math.PI/(1*corners)))); //randomly chooses, starting from zero degrees
+			yCorners[i] = (int)(randomizer*genSize*Math.sin(i*(2*Math.PI/(1*corners)))); //goes around the backwards unit circle
 		}
 
 		//position related
@@ -173,6 +178,8 @@ class Asteroid extends Floater
 	public double getDirectionY() {return myDirectionY;}
 	public void setPointDirection(int degrees) {myPointDirection = degrees;}
 	public double getPointDirection() {return myPointDirection;}
+	//only for asteroid
+	public int getSize() {return (int)genSize;}
 
 	public void move() //move the floater in the current direction of travel
 	{
@@ -182,15 +189,15 @@ class Asteroid extends Floater
 		myCenterY += myDirectionY;
 
 		//wrap around screen    
-		if(myCenterX >width)
+		if(myCenterX > width)
 		{
 			myCenterX = 0;
 		}
-		else if (myCenterX<0)
+		else if (myCenterX < 0)
 		{
 			myCenterX = width;
 		}
-		if(myCenterY >height)
+		if(myCenterY > height)
 		{
 			myCenterY = 0;
 		}
@@ -198,6 +205,24 @@ class Asteroid extends Floater
 		{
 			myCenterY = height;
 		}
+	}
+
+	public void show()  //Draws the floater at the current position
+	{
+		noFill(); //change to no fill
+		stroke(myColor);
+		//convert degrees to radians for sin and cos
+		double dRadians = myPointDirection*(Math.PI/180);
+		int xRotatedTranslated, yRotatedTranslated;
+		beginShape();
+		for(int nI = 0; nI < corners; nI++)
+		{
+			//rotate and translate the coordinates of the floater using current direction 
+			xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
+			yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
+			vertex(xRotatedTranslated,yRotatedTranslated);
+		}
+		endShape(CLOSE);
 	}
 };
 
