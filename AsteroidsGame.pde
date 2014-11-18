@@ -13,7 +13,10 @@ public void setup()
 	for (int i = 0; i < 12; i++)
 	{
 		asteroids.add(new Asteroid());	
+		System.out.println(asteroids.get(i));
 	}
+
+
 	
 
 	//stars
@@ -37,7 +40,7 @@ public void draw()
 	{
 		asteroids.get(i).move();
 		asteroids.get(i).show();
-		if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 2*asteroids.get(i).getSize())
+		if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 3*asteroids.get(i).getSize())
 		{
 			asteroids.remove(i);
 		}
@@ -148,7 +151,7 @@ class Asteroid extends Floater
 		}
 
 		//random method of drawing random sided asteroids
-		genSize = (int)(Math.random()*4)+3; 
+		genSize = (int)(Math.random()*4)+4; 
 		corners = (int)(Math.random()*4)+4; 
 		xCorners = new int[corners];
 		yCorners = new int[corners];
@@ -164,8 +167,19 @@ class Asteroid extends Floater
 		myColor = color(230);
 		myCenterX = Math.random()*width;
 		myCenterY = Math.random()*height;
-		myDirectionX = (int)(Math.random()*5)-2;
-		myDirectionY = (int)(Math.random()*5)-2;
+
+		if (Math.random() >= 0.5) //always moving
+		{
+			myDirectionX = ((int)(Math.random()*1)+1);
+			myDirectionY = ((int)(Math.random()*1)+1);
+		}
+		else
+		{
+			myDirectionX = -((int)(Math.random()*1)+1);
+			myDirectionY = -((int)(Math.random()*1)+1);
+		}
+
+
 		myPointDirection = (int)(Math.random()*5)-2;
 	}
 	public void setX(int x) {myCenterX = x;}
