@@ -18,21 +18,22 @@ SpaceShip ship1;
 
 Star[] stars;
 ArrayList<Asteroid> asteroids;
+ArrayList<Bullet> bullets;
 
 public void setup() 
 {
-	size (400, 400);
+	size (800, 800);
 	ship1 = new SpaceShip();
 
 	//asteroids
 	asteroids = new ArrayList<Asteroid>();
 	for (int i = 0; i < 12; i++)
 	{
-		asteroids.add(new Asteroid());	
+		asteroids.add(new Asteroid());
 	}
 
-
-	
+	//bullets
+	bullets = new ArrayList<Bullet>();
 
 	//stars
 	stars = new Star[100];
@@ -47,6 +48,7 @@ public void draw()
 	background(10);
 	//ship
 	ship1.control(); //controlling keys wasd
+	ship1.fireBullets(bullets, ship1);
 	ship1.move();
 	ship1.show();
 
@@ -59,6 +61,13 @@ public void draw()
 		{
 			asteroids.remove(i);
 		}
+	}
+
+	//bullets
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		bullets.get(i).move();
+		bullets.get(i).show();
 	}
 
 	//stars
@@ -149,48 +158,10 @@ class SpaceShip extends Floater
 		accelerate(0);
 		rotate((int)(Math.random()*360));
 	}
-};
 
-class Bullet extends Floater
-{
-	private double dRadians;
-	public Bullet(SpaceShip theShip)
+	public void fireBullets(ArrayList bullets, SpaceShip theShip) //fires bullet, from any designated ship
 	{
-		myCenterX = theShip.getX();
-		myCenterY = theShip.getY();
-		myPointDirection = theShip.getPointDirection()*(Math.PI/180); //turn into radians
-		dRadians = myPointDirection*(Math.PI/180);
-		myDirectionX = Math.cos(dRadians) + theShip.getDirectionX();
-		myDirectionY = Math.sin(dRadians) + theShip.getDirectionY();
-	}
-
-	public void setX(int x) {myCenterX = x;}
-	public int getX() {return (int)myCenterX;}
-	public void setY(int y) {myCenterY = y;}
-	public int getY() {return (int)myCenterY;}
-	public void setDirectionX(double x) {myDirectionX = x;}
-	public double getDirectionX() {return myDirectionX;}
-	public void setDirectionY(double y) {myDirectionY = y;}
-	public double getDirectionY() {return myDirectionY;}
-	public void setPointDirection(int degrees) {myPointDirection = degrees;}
-	public double getPointDirection() {return myPointDirection;}
-	
-	public void show()  //Draws the floater at the current position
-	{
-		fill(myColor);
-		stroke(myColor);
-		//convert degrees to radians for sin and cos
-		double dRadians = myPointDirection*(Math.PI/180);
-		int xRotatedTranslated, yRotatedTranslated;
-		beginShape();
-		for(int nI = 0; nI < corners; nI++)
-		{
-			//rotate and translate the coordinates of the floater using current direction 
-			xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
-			yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
-			vertex(xRotatedTranslated,yRotatedTranslated);
-		}
-		endShape(CLOSE);
+		if (keyPressed && key == 'j') {bullets.add(new Bullet(theShip));}
 	}
 };
 
@@ -295,6 +266,40 @@ class Asteroid extends Floater
 			vertex(xRotatedTranslated,yRotatedTranslated);
 		}
 		endShape(CLOSE);
+	}
+};
+
+class Bullet extends Floater
+{
+	private double dRadians;
+	public Bullet(SpaceShip theShip)
+	{
+		myCenterX = theShip.getX();
+		myCenterY = theShip.getY();
+		myPointDirection = theShip.getPointDirection()*(Math.PI/180); //turn into radians
+		dRadians = myPointDirection;
+		myDirectionX = Math.cos(dRadians) + theShip.getDirectionX();
+		myDirectionY = Math.sin(dRadians) + theShip.getDirectionY();
+	}
+
+	public void setX(int x) {myCenterX = x;}
+	public int getX() {return (int)myCenterX;}
+	public void setY(int y) {myCenterY = y;}
+	public int getY() {return (int)myCenterY;}
+	public void setDirectionX(double x) {myDirectionX = x;}
+	public double getDirectionX() {return myDirectionX;}
+	public void setDirectionY(double y) {myDirectionY = y;}
+	public double getDirectionY() {return myDirectionY;}
+	public void setPointDirection(int degrees) {myPointDirection = degrees;}
+	public double getPointDirection() {return myPointDirection;}
+	
+	public void show()  //Draws the floater at the current position
+	{
+		fill(238, 22, 133);
+		stroke(myColor);
+		//convert degrees to radians for sin and cos
+		double dRadians = myPointDirection*(Math.PI/180);
+		ellipse((float)myCenterX, (float)myCenterY, 5, 5);
 	}
 };
 
