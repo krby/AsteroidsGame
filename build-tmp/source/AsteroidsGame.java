@@ -29,7 +29,6 @@ public void setup()
 	for (int i = 0; i < 12; i++)
 	{
 		asteroids.add(new Asteroid());	
-		System.out.println(asteroids.get(i));
 	}
 
 
@@ -88,7 +87,7 @@ public void mousePressed() //for debugging
 	redraw();
 }	
 
-//___classes___
+//	___classes___
 class SpaceShip extends Floater  
 {
 	private int maxSpd;
@@ -149,6 +148,49 @@ class SpaceShip extends Floater
 		setDirectionY(0);
 		accelerate(0);
 		rotate((int)(Math.random()*360));
+	}
+};
+
+class Bullet extends Floater
+{
+	private double dRadians;
+	public Bullet(SpaceShip theShip)
+	{
+		myCenterX = theShip.getX();
+		myCenterY = theShip.getY();
+		myPointDirection = theShip.getPointDirection()*(Math.PI/180); //turn into radians
+		dRadians = myPointDirection*(Math.PI/180);
+		myDirectionX = Math.cos(dRadians) + theShip.getDirectionX();
+		myDirectionY = Math.sin(dRadians) + theShip.getDirectionY();
+	}
+
+	public void setX(int x) {myCenterX = x;}
+	public int getX() {return (int)myCenterX;}
+	public void setY(int y) {myCenterY = y;}
+	public int getY() {return (int)myCenterY;}
+	public void setDirectionX(double x) {myDirectionX = x;}
+	public double getDirectionX() {return myDirectionX;}
+	public void setDirectionY(double y) {myDirectionY = y;}
+	public double getDirectionY() {return myDirectionY;}
+	public void setPointDirection(int degrees) {myPointDirection = degrees;}
+	public double getPointDirection() {return myPointDirection;}
+	
+	public void show()  //Draws the floater at the current position
+	{
+		fill(myColor);
+		stroke(myColor);
+		//convert degrees to radians for sin and cos
+		double dRadians = myPointDirection*(Math.PI/180);
+		int xRotatedTranslated, yRotatedTranslated;
+		beginShape();
+		for(int nI = 0; nI < corners; nI++)
+		{
+			//rotate and translate the coordinates of the floater using current direction 
+			xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
+			yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
+			vertex(xRotatedTranslated,yRotatedTranslated);
+		}
+		endShape(CLOSE);
 	}
 };
 
