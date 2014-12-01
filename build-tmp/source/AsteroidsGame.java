@@ -61,6 +61,14 @@ public void draw()
 		{
 			asteroids.remove(i);
 		}
+
+		for (int j = 0; j < bullets.size(); j++)
+		{
+			if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
+			{
+				asteroids.remove(i);
+			}
+		}
 	}
 
 	//bullets
