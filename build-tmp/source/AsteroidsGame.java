@@ -57,15 +57,16 @@ public void draw()
 	{
 		asteroids.get(i).move();
 		asteroids.get(i).show();
-		if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 3*asteroids.get(i).getSize())
-		{
-			asteroids.remove(i);
-		}
+		// if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 3*asteroids.get(i).getSize())
+		// {
+		// 	asteroids.remove(i);
+		// }
 
 		for (int j = 0; j < bullets.size(); j++)
 		{
 			if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
 			{
+				bullets.remove(j);
 				asteroids.remove(i);
 			}
 		}
@@ -76,6 +77,11 @@ public void draw()
 	{
 		bullets.get(i).move();
 		bullets.get(i).show();
+		
+		if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
+		{
+			bullets.remove(i);
+		}
 	}
 
 	//stars
@@ -354,7 +360,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 		myCenterY += myDirectionY;
 
 		//wrap around screen    
-		if(myCenterX >width)
+		if(myCenterX > width)
 		{
 			myCenterX = 0;
 		}
@@ -362,7 +368,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 		{
 			myCenterX = width;
 		}
-		if(myCenterY >height)
+		if(myCenterY > height)
 		{
 			myCenterY = 0;
 		}
