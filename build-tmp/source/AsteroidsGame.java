@@ -48,7 +48,7 @@ public void draw()
 	background(10);
 	//ship
 	ship1.control(); //controlling keys wasd
-	ship1.fireBullets(bullets, ship1);
+	//ship1.fireBullets();
 	ship1.move();
 	ship1.show();
 
@@ -57,10 +57,6 @@ public void draw()
 	{
 		asteroids.get(i).move();
 		asteroids.get(i).show();
-		// if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), ship1.getX(), ship1.getY()) < 3*asteroids.get(i).getSize())
-		// {
-		// 	asteroids.remove(i);
-		// }
 
 		for (int j = 0; j < bullets.size(); j++)
 		{
@@ -68,8 +64,10 @@ public void draw()
 			{
 				bullets.remove(j);
 				asteroids.remove(i);
+				return;
 			}
 		}
+		println(bullets.size());
 	}
 
 	//bullets
@@ -77,8 +75,13 @@ public void draw()
 	{
 		bullets.get(i).move();
 		bullets.get(i).show();
-		
-		if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
+
+		// if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
+		// {
+		// 	bullets.remove(i);
+		// }
+
+		if (bullets.get(i).getX() > width/2)
 		{
 			bullets.remove(i);
 		}
@@ -101,6 +104,14 @@ public void keyReleased()
 	if (key == 32) //space
 	{
 		ship1.hyperspace(); //hyerspace stops ship and puts in new location
+	}
+}
+
+public void keyPressed()
+{
+	if (key == 'j') //space
+	{
+		bullets.add(new Bullet(ship1));
 	}
 }
 
@@ -171,11 +182,6 @@ class SpaceShip extends Floater
 		setDirectionY(0);
 		accelerate(0);
 		rotate((int)(Math.random()*360));
-	}
-
-	public void fireBullets(ArrayList bullets, SpaceShip theShip) //fires bullet, from any designated ship
-	{
-		if (keyPressed && key == 'j') {bullets.add(new Bullet(theShip));}
 	}
 };
 
