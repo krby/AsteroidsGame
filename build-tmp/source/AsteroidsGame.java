@@ -27,7 +27,7 @@ public void setup()
 
 	//asteroids
 	asteroids = new ArrayList<Asteroid>();
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		asteroids.add(new Asteroid());
 	}
@@ -51,6 +51,14 @@ public void draw()
 	ship1.control(); //controlling keys wasd
 	ship1.move();
 	ship1.show();
+	for (int i = 0; i < asteroids.size(); i++)
+	{
+		if (dist(ship1.getX(), ship1.getY(), asteroids.get(i).getX(), asteroids.get(i).getY()) < 3*asteroids.get(i).getSize()) 
+		{
+
+		} 
+	}
+
 
 	//asteroids
 	for (int i = 0; i < asteroids.size(); i++)
@@ -58,15 +66,16 @@ public void draw()
 		asteroids.get(i).move();
 		asteroids.get(i).show();
 
-		for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
-		{
-			if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
-			{
-				bullets.remove(j);
-				asteroids.remove(i);
-				return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
-			}
-		}
+		asteroids.get(i).astCollisionDtct(bullets, asteroids, i);
+		// for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
+		// {
+		// 	if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
+		// 	{
+		// 		bullets.remove(j);
+		// 		asteroids.remove(i);
+		// 		return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
+		// 	}
+		// }
 	}
 
 	//bullets
@@ -159,7 +168,6 @@ class SpaceShip extends Floater
 	{
 		//controlling keys: w/s to forward/backward, d/a left/right
 		if (keyPressed && key == 'w') {accelerate(0.05f);}
-		if (keyPressed && key == 's') {accelerate(-0.05f);} 
 		if (keyPressed && key == 'd') {rotate(3);}
 		if (keyPressed && key == 'a') {rotate(-3);}
 	}
@@ -181,7 +189,7 @@ class Asteroid extends Floater
 	private int rotSpd, genSize; //rotation spd, general size
 	public Asteroid()
 	{
-		if (Math.random() >= 0.5f) //can spin both ways
+		if (Math.random() >= 0.5f) //can spin both ways. always has rotation
 		{
 			rotSpd = (int)(Math.random()*5)+1;
 		}
@@ -191,7 +199,7 @@ class Asteroid extends Floater
 		}
 
 		//random method of drawing random sided asteroids
-		genSize = (int)(Math.random()*4)+4; 
+		genSize = (int)(Math.random()*0.01f*width)+4; 
 		corners = (int)(Math.random()*4)+4; 
 		xCorners = new int[corners];
 		yCorners = new int[corners];
@@ -222,6 +230,7 @@ class Asteroid extends Floater
 
 		myPointDirection = (int)(Math.random()*5)-2;
 	}
+
 	public void setX(int x) {myCenterX = x;}
 	public int getX() {return (int)myCenterX;}
 	public void setY(int y) {myCenterY = y;}
@@ -278,6 +287,19 @@ class Asteroid extends Floater
 		}
 		endShape(CLOSE);
 	}
+
+	public void astCollisionDtct(ArrayList bullets, ArrayList asteroids, int i)
+	{
+		for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
+		{
+			if (dist(myCenterX, myCenterY, bullets.get(j).getX(), bullets.get(j).getY()) < 3*genSize)
+			{
+				bullets.remove(j);
+				asteroids.remove(i);
+				return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
+			}
+		}
+	}
 };
 
 class Bullet extends Floater
@@ -289,8 +311,8 @@ class Bullet extends Floater
 		myCenterY = theShip.getY();
 		myPointDirection = theShip.getPointDirection()*(Math.PI/180); //turn into radians
 		dRadians = myPointDirection;
-		myDirectionX = Math.cos(dRadians) + theShip.getDirectionX();
-		myDirectionY = Math.sin(dRadians) + theShip.getDirectionY();
+		myDirectionX = Math.cos(dRadians); //+ theShip.getDirectionX();
+		myDirectionY = Math.sin(dRadians); //+ theShip.getDirectionY();
 	}
 
 	public void setX(int x) {myCenterX = x;}
@@ -306,11 +328,18 @@ class Bullet extends Floater
 	
 	public void show()  //Draws the floater at the current position
 	{
-		fill(238, 22, 133);
-		stroke(myColor);
+		noFill();
+		stroke(205);
 		//convert degrees to radians for sin and cos
 		double dRadians = myPointDirection*(Math.PI/180);
 		ellipse((float)myCenterX, (float)myCenterY, 5, 5);
+	}
+
+	public void move()
+	{
+		//change the x and y coordinates by myDirectionX and myDirectionY       
+		myCenterX += 4*myDirectionX;
+		myCenterY += 4*myDirectionY;
 	}
 };
 
@@ -355,6 +384,24 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 		//change the x and y coordinates by myDirectionX and myDirectionY       
 		myCenterX += myDirectionX;
 		myCenterY += myDirectionY;
+
+		//wrap around screen    
+		if(myCenterX > width)
+		{
+			myCenterX = 0;
+		}
+		else if (myCenterX < 0)
+		{
+			myCenterX = width;
+		}
+		if(myCenterY > height)
+		{
+			myCenterY = 0;
+		}
+		else if (myCenterY < 0)
+		{
+			myCenterY = height;
+		}
 	}
 
 	public void show()  //Draws the floater at the current position
