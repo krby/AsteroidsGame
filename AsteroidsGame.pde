@@ -30,9 +30,9 @@ public void setup()
 public void draw() 
 {
 	background(10);
+
 	//ship
 	ship1.control(); //controlling keys wasd
-	//ship1.fireBullets();
 	ship1.move();
 	ship1.show();
 
@@ -42,16 +42,15 @@ public void draw()
 		asteroids.get(i).move();
 		asteroids.get(i).show();
 
-		for (int j = 0; j < bullets.size(); j++)
+		for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
 		{
 			if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
 			{
 				bullets.remove(j);
 				asteroids.remove(i);
-				return;
+				return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
 			}
 		}
-		println(bullets.size());
 	}
 
 	//bullets
@@ -62,13 +61,8 @@ public void draw()
 
 		if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
 		{
-			bullets.remove(i);
+			bullets.remove(i); //if bullet out of bounds, remove
 		}
-
-		// if (bullets.get(i).getX() > width/2)
-		// {
-		// 	bullets.remove(i);
-		// }
 	}
 
 	//stars
@@ -89,11 +83,8 @@ public void keyReleased()
 	{
 		ship1.hyperspace(); //hyerspace stops ship and puts in new location
 	}
-}
 
-public void keyPressed()
-{
-	if (key == 'j') //space
+	if (key == 'j') //shoot
 	{
 		bullets.add(new Bullet(ship1));
 	}
