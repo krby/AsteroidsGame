@@ -60,15 +60,15 @@ public void draw()
 		bullets.get(i).move();
 		bullets.get(i).show();
 
-		// if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
-		// {
-		// 	bullets.remove(i);
-		// }
-
-		if (bullets.get(i).getX() > width/2)
+		if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
 		{
 			bullets.remove(i);
 		}
+
+		// if (bullets.get(i).getX() > width/2)
+		// {
+		// 	bullets.remove(i);
+		// }
 	}
 
 	//stars
@@ -348,24 +348,6 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 		//change the x and y coordinates by myDirectionX and myDirectionY       
 		myCenterX += myDirectionX;
 		myCenterY += myDirectionY;
-
-		//wrap around screen    
-		if(myCenterX > width)
-		{
-			myCenterX = 0;
-		}
-		else if (myCenterX<0)
-		{
-			myCenterX = width;
-		}
-		if(myCenterY > height)
-		{
-			myCenterY = 0;
-		}
-		else if (myCenterY < 0)
-		{
-			myCenterY = height;
-		}
 	}
 
 	public void show()  //Draws the floater at the current position
