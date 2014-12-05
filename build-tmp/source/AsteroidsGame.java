@@ -43,63 +43,82 @@ public void setup()
 	}
 }
 
+//game screen logic
+public boolean alive = true;
+public int score = 0;
+
 public void draw() 
 {
 	background(10);
 
-	//ship
-	ship1.control(); //controlling keys wasd
-	ship1.move();
-	ship1.show();
-	for (int i = 0; i < asteroids.size(); i++)
+	if (alive == true)
 	{
-		if (dist(ship1.getX(), ship1.getY(), asteroids.get(i).getX(), asteroids.get(i).getY()) < 3*asteroids.get(i).getSize()) 
+		//ship
+		ship1.control(); //controlling keys wasd
+		ship1.move();
+		//ship1.shield();
+		ship1.show();
+		for (int i = 0; i < asteroids.size(); i++)
 		{
-
-		} 
-	}
-
-
-	//asteroids
-	for (int i = 0; i < asteroids.size(); i++)
-	{
-		asteroids.get(i).move();
-		asteroids.get(i).show();
-
-		asteroids.get(i).astCollisionDtct(bullets, asteroids, i);
-		// for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
-		// {
-		// 	if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
-		// 	{
-		// 		bullets.remove(j);
-		// 		asteroids.remove(i);
-		// 		return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
-		// 	}
-		// }
-	}
-
-	//bullets
-	for (int i = 0; i < bullets.size(); i++)
-	{
-		bullets.get(i).move();
-		bullets.get(i).show();
-
-		if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
-		{
-			bullets.remove(i); //if bullet out of bounds, remove
+			if (dist(ship1.getX(), ship1.getY(), asteroids.get(i).getX(), asteroids.get(i).getY()) < 3*asteroids.get(i).getSize())
+			{
+				alive = false;
+			}
 		}
+
+		//asteroids
+		for (int i = 0; i < asteroids.size(); i++)
+		{
+			asteroids.get(i).move();
+			asteroids.get(i).show();
+
+			// asteroids.get(i).detectCollision(bullets, asteroids, i);
+			for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
+			{
+				if (dist(asteroids.get(i).getX(), asteroids.get(i).getY(), bullets.get(j).getX(), bullets.get(j).getY()) < 3*asteroids.get(i).getSize())
+				{
+					bullets.remove(j);
+					asteroids.remove(i);
+					score++;
+					return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
+				}
+			}
+		}
+
+		//bullets
+		for (int i = 0; i < bullets.size(); i++)
+		{
+			bullets.get(i).move();
+			bullets.get(i).show();
+
+			if (bullets.get(i).getX() > width || bullets.get(i).getX() < 0 || bullets.get(i).getY() > height || bullets.get(i).getY() < 0)
+			{
+				bullets.remove(i); //if bullet out of bounds, remove
+			}
+		}
+
+		//stars
+		for (int i = 0; i < stars.length; i++)
+		{
+			stars[i].show();
+		}
+
+		//show numbers
+		fill(255);
+		textAlign(LEFT, CENTER);
+		text("xDirection: " + (float)ship1.getDirectionX(), 20, 50);
+		text("yDirection: " + (float)ship1.getDirectionY(), 20, 60);
+		text("Score: " + score, 20, 70);
 	}
 
-	//stars
-	for (int i = 0; i < stars.length; i++)
+
+	if (alive == false)
 	{
-		stars[i].show();
+		textAlign(CENTER, CENTER);
+		text("you died", width/2, height/2);
+		text("click to play again", width/2, 10+height/2);
+		text(score, width/2, 20+height/2);
 	}
-
-	//show numbers
-	fill(255);
-	text("xDirection: " + (float)ship1.getDirectionX(), 20, 50);
-	text("yDirection: " + (float)ship1.getDirectionY(), 20, 60);
 }
 
 public void keyReleased()
@@ -117,8 +136,13 @@ public void keyReleased()
 
 public void mousePressed() //for debugging
 {
-	setup();
-	redraw();
+	if (alive == false)
+	{
+		alive = true;
+		setup();
+		redraw();	
+	}
+	
 }	
 
 //	___classes___
@@ -182,6 +206,27 @@ class SpaceShip extends Floater
 		accelerate(0);
 		rotate((int)(Math.random()*360));
 	}
+
+	public void shield()
+	{
+		fill(myColor);
+		stroke(myColor);
+		//convert degrees to radians for sin and cos
+		double dRadians = myPointDirection*(Math.PI/180);
+		int xRotatedTranslated, yRotatedTranslated;
+		beginShape();
+		for(int nI = 0; nI < corners; nI++)
+		{
+			//rotate and translate the coordinates of the floater using current direction 
+			xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
+			yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
+			vertex(xRotatedTranslated,yRotatedTranslated);
+		}
+		endShape(CLOSE);
+		noFill();
+		stroke(255, 100);
+		ellipse((float)myCenterX, (float)myCenterY, 50, 50);
+	}
 };
 
 class Asteroid extends Floater 
@@ -213,8 +258,25 @@ class Asteroid extends Floater
 
 		//position related
 		myColor = color(230);
-		myCenterX = Math.random()*width;
-		myCenterY = Math.random()*height;
+
+		//position never too at the center, aka where the ship is
+		if (Math.random() >= 0.5f) 
+		{
+			myCenterX = (Math.random()*width/2)-50;
+		}
+		else
+		{
+			myCenterX = (Math.random()*width/2)+width/2+50;
+		}
+		if (Math.random() >= 0.5f) //can spin both ways. always has rotation
+		{
+			myCenterY = (Math.random()*height/2)-50;
+		}
+		else
+		{
+			myCenterY = (Math.random()*height/2)+height/2+50;
+		}
+		
 
 		if (Math.random() >= 0.5f) //always moving
 		{
@@ -288,18 +350,18 @@ class Asteroid extends Floater
 		endShape(CLOSE);
 	}
 
-	public void astCollisionDtct(ArrayList bullets, ArrayList asteroids, int i)
-	{
-		for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
-		{
-			if (dist(myCenterX, myCenterY, bullets.get(j).getX(), bullets.get(j).getY()) < 3*genSize)
-			{
-				bullets.remove(j);
-				asteroids.remove(i);
-				return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
-			}
-		}
-	}
+	// public void detectCollision(ArrayList bullets, ArrayList asteroids, int i)
+	// {
+	// 	for (int j = 0; j < bullets.size(); j++) //collision detection: everytime asteroid moves, check collision with all bullets
+	// 	{
+	// 		if (dist(myCenterX, myCenterY, bullets.get(j).getX(), bullets.get(j).getY()) < 3*genSize)
+	// 		{
+	// 			bullets.remove(j);
+	// 			asteroids.remove(i);
+	// 			return; //necessary bc if the asteroid is removed, cannot reference it in the conditional
+	// 		}
+	// 	}
+	// }
 };
 
 class Bullet extends Floater
